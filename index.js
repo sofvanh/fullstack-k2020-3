@@ -58,8 +58,26 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const person = req.body
-    person.id = Math.round(Math.random() * 10000)
+    const body = req.body
+
+    if (!body.name || !body.number) {
+        return res.status(400).json({
+            error: 'information missing'
+        })
+    }
+
+    if (persons.filter(p => p.name === body.name).length > 0) {
+        return res.status(400).json({
+            error: 'contact exists already'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.round(Math.random() * 10000)
+    }
+
     persons = persons.concat(person)
     res.json(person)
 })
