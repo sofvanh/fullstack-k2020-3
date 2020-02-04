@@ -2,8 +2,13 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 
+morgan.token('json', function getJson(req) {
+    return req.json
+})
+
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(assignJson)
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :json'))
 
 let persons = [
     {
@@ -88,3 +93,12 @@ const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
 })
+
+function assignJson(req, res, next) {
+    if (req.method === "POST") {
+        req.json = JSON.stringify(req.body)
+    } else {
+        req.json = ' '
+    }
+    next()
+}
