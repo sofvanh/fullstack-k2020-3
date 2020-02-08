@@ -21,13 +21,15 @@ app.get('/', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    const amount = persons.length
-    const time = new Date()
-    res.send(
-        `<p>Phonebook has info for ${amount} people</p>
+    Person.find({}).then(persons => {
+        const amount = persons.length
+        const time = new Date()
+        res.send(
+            `<p>Phonebook has info for ${amount} people</p>
         <p>${time}</p>
         `
-    )
+        )
+    })
 })
 
 app.get('/api/persons', (req, res) => {
@@ -37,22 +39,19 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(p => p.id === id)
-
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+    Person.findById(req.params.id).then(person => {
+        res.json(person.toJSON())
+    })
 })
 
+/*
 app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     persons = persons.filter(p => p.id !== id)
 
     res.status(204).end()
 })
+*/
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
@@ -63,20 +62,22 @@ app.post('/api/persons', (req, res) => {
         })
     }
 
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+
+    person.save().then(savedPerson => {
+        res.json(savedPerson.toJSON())
+    })
+
+    /*
     if (persons.filter(p => p.name === body.name).length > 0) {
         return res.status(400).json({
             error: 'contact exists already'
         })
     }
-
-    const person = {
-        name: body.name,
-        number: body.number,
-        id: Math.round(Math.random() * 10000)
-    }
-
-    persons = persons.concat(person)
-    res.json(person)
+    */
 })
 
 const PORT = process.env.PORT
