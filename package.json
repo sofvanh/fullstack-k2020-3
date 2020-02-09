@@ -9,11 +9,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../fullstack-k2020/osa2-puhelinluettelo && npm run build --prod && cp -r build ../../fullstack-k2020-3",
     "deploy": "git push heroku master",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "author": "sofivanhanen",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^6.8.0",
     "nodemon": "^2.0.2"
   },
   "dependencies": {
